@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>clima</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: #ADD8E6; /* Establecer el color de fondo a negro */
+        font-family: Arial, sans-serif;
+    }
+
+    .container {
+        text-align: center;
+        padding-top: 100px; /* Ajusta según sea necesario */
+        color: white; /* Color de texto para que se vea bien sobre el fondo */
+    }
+
+    #weather-info {
+        background: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+        padding: 20px;
+        border-radius: 10px;
+        max-width: 300px;
+        margin: 0 auto;
+    }
+
+    h1 {
+        font-size: 2em;
+    }
+
+    p {
+        font-size: 1.2em;
+    }
+</style
+
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>clima</h1>
+    <div id="weather-info">
+        <p>Loading...</p>
+    </div>
+</div>
+<script>
+    // JavaScript para obtener y mostrar información meteorológica
+
+    // Función para obtener la información del clima
+    function getWeather(latitude, longitude) {
+        // Usar fetch para hacer una solicitud a la API de pronóstico del tiempo
+        fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=YOUR_API_KEY&units=metric`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Weather data:', data); // Mostrar datos recibidos de la API en la consola
+                // Procesar la respuesta y mostrar la información del clima en la interfaz
+                const weatherInfo = document.getElementById('weather-info');
+                const temperature = data.main.temp;
+                const description = data.weather[0].description;
+                weatherInfo.innerHTML = `
+                    <p>Current Temperature: ${temperature}°C</p>
+                    <p>Weather: ${description}</p>
+                `;
+            })
+            .catch(error => console.error('Error fetching weather data:', error));
+    }
+
+    // Función para obtener la ubicación del usuario y el clima
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(position => {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+                getWeather(latitude, longitude);
+            }, error => {
+                console.error('Error getting location:', error);
+            });
+        } else {
+            console.error('Geolocation is not supported by this browser.');
+        }
+    }
+
+    // Llamar a la función getLocation al cargar la página para obtener la ubicación del usuario
+    window.onload = getLocation;
+</script>
+</body>
+</html>
